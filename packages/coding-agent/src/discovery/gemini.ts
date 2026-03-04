@@ -144,6 +144,7 @@ async function loadContextFiles(ctx: LoadContext): Promise<LoadResult<ContextFil
 	if (projectGeminiMd) {
 		const content = await readFile(projectGeminiMd);
 		if (content) {
+			const projectBase = getProjectPath(ctx, "gemini", "");
 			const depth = projectBase ? calculateDepth(ctx.cwd, path.dirname(projectBase), path.sep) : 0;
 
 			items.push({
