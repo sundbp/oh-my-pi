@@ -247,7 +247,7 @@ registerProvider<SystemPrompt>(systemPromptCapability.id, {
 // Skills
 async function loadSkills(ctx: LoadContext): Promise<LoadResult<Skill>> {
 	// Walk up from cwd finding .omp/skills/ in ancestors (closest first)
-	const ancestors = getAncestorDirs(ctx.cwd, ctx.repoRoot).slice(0, 20);
+	const ancestors = getAncestorDirs(ctx.cwd, ctx.repoRoot);
 	const projectScans = ancestors.map(({ dir }) =>
 		scanSkillsFromDir(ctx, {
 			dir: path.join(dir, PATHS.projectDir, "skills"),

@@ -27,7 +27,7 @@ const PROVIDER_ID = "agents";
 function getProjectPathCandidates(ctx: LoadContext, ...segments: string[]): string[] {
 	const paths: string[] = [];
 	let current = ctx.cwd;
-	for (let depth = 0; depth < 20; depth++) {
+	while (true) {
 		for (const baseDir of AGENT_DIR_CANDIDATES) {
 			paths.push(path.join(current, baseDir, ...segments));
 		}

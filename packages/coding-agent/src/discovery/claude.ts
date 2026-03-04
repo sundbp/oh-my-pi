@@ -168,7 +168,7 @@ async function loadSkills(ctx: LoadContext): Promise<LoadResult<Skill>> {
 	// Walk up from cwd finding .claude/skills/ in ancestors
 	const projectScans: Promise<LoadResult<Skill>>[] = [];
 	let current = ctx.cwd;
-	for (let depth = 0; depth < 20; depth++) {
+	while (true) {
 		projectScans.push(
 			scanSkillsFromDir(ctx, {
 				dir: path.join(current, CONFIG_DIR, "skills"),

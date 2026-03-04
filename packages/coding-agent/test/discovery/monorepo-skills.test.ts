@@ -54,7 +54,7 @@ describe("monorepo skill discovery", () => {
 		// Simulate the walk-up pattern used by the builtin provider
 		const results: LoadResult<Skill>[] = [];
 		let current = subProject;
-		for (let depth = 0; depth < 20; depth++) {
+		while (true) {
 			const result = await scanSkillsFromDir(ctx, {
 				dir: path.join(current, ".omp", "skills"),
 				providerId: "native",
@@ -83,7 +83,7 @@ describe("monorepo skill discovery", () => {
 
 		const results: LoadResult<Skill>[] = [];
 		let current = subProject;
-		for (let depth = 0; depth < 20; depth++) {
+		while (true) {
 			const result = await scanSkillsFromDir(ctx, {
 				dir: path.join(current, ".omp", "skills"),
 				providerId: "native",
@@ -108,7 +108,7 @@ describe("monorepo skill discovery", () => {
 		// No skills anywhere
 		const results: LoadResult<Skill>[] = [];
 		let current = subProject;
-		for (let depth = 0; depth < 5; depth++) {
+		while (true) {
 			const result = await scanSkillsFromDir(ctx, {
 				dir: path.join(current, ".omp", "skills"),
 				providerId: "native",
@@ -133,7 +133,7 @@ describe("monorepo skill discovery", () => {
 
 		const results: LoadResult<Skill>[] = [];
 		let current = subProject;
-		for (let depth = 0; depth < 20; depth++) {
+		while (true) {
 			const result = await scanSkillsFromDir(ctx, {
 				dir: path.join(current, ".omp", "skills"),
 				providerId: "native",
@@ -164,7 +164,7 @@ describe("monorepo skill discovery", () => {
 		// Simulate the walk-up with repo root boundary (matching builtin provider pattern)
 		const results: LoadResult<Skill>[] = [];
 		let current = subProject;
-		for (let depth = 0; depth < 20; depth++) {
+		while (true) {
 			const result = await scanSkillsFromDir(ctx, {
 				dir: path.join(current, ".omp", "skills"),
 				providerId: "native",
