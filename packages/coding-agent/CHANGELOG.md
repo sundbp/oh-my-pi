@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+### Added
+
+- Added project-level discovery for `.agent/` and `.agents/` directories, walking up from cwd to repo root (matching behavior of other providers like `.omp`, `.claude`, `.codex`). Applies to skills, rules, prompts, commands, context files (AGENTS.md), and system prompts (SYSTEM.md)
+
 ## [13.7.6] - 2026-03-04
 ### Added
 
