@@ -35,7 +35,7 @@ function getProjectPathCandidates(ctx: LoadContext, ...segments: string[]): stri
 		for (const baseDir of AGENT_DIR_CANDIDATES) {
 			paths.push(path.join(current, baseDir, ...segments));
 		}
-		if (ctx.repoRoot && current === ctx.repoRoot) break;
+		if (current === (ctx.repoRoot ?? ctx.home)) break;
 		const parent = path.dirname(current);
 		if (parent === current) break;
 		current = parent;

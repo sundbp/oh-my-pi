@@ -171,7 +171,7 @@ describe("monorepo skill discovery", () => {
 				level: "project",
 			});
 			results.push(result);
-			if (ctx.repoRoot && current === ctx.repoRoot) break; // stop at repo root
+			if (current === (ctx.repoRoot ?? ctx.home)) break; // stop at repo root or home
 			const parent = path.dirname(current);
 			if (parent === current) break;
 			current = parent;

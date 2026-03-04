@@ -32,7 +32,7 @@ function getProjectPathCandidates(ctx: LoadContext, ...segments: string[]): stri
 		for (const baseDir of AGENT_DIR_CANDIDATES) {
 			paths.push(path.join(current, baseDir, ...segments));
 		}
-		if (ctx.repoRoot && current === ctx.repoRoot) break;
+		if (current === (ctx.repoRoot ?? ctx.home)) break;
 		const parent = path.dirname(current);
 		if (parent === current) break;
 		current = parent;
@@ -145,6 +145,24 @@ describe("agents provider project-level discovery", () => {
 			const names = results.flatMap(r => r.items).map(s => s.name);
 			expect(names).toContain("root-skill");
 			expect(names).not.toContain("above-repo-skill");
+		});
+
+		test("walk-up stops at home when no repo root", async () => {
+			// ctx without repoRoot
+			const noRepoCtx: LoadContext = { cwd: subProject, home: repoRoot, repoRoot: null };
+			// Skill above home (should NOT be found)
+			writeSkill(path.join(tempDir, ".agents", "skills"), "above-home-skill", "Above home");
+			// Skill at home (should be found)
+			writeSkill(path.join(repoRoot, ".agents", "skills"), "home-skill", "At home");
+
+			const results = await Promise.all(
+				getProjectPathCandidates(noRepoCtx, "skills").map(dir =>
+					scanSkillsFromDir(noRepoCtx, { dir, providerId: PROVIDER_ID, level: "project" }),
+				),
+			);
+			const names = results.flatMap(r => r.items).map(s => s.name);
+			expect(names).toContain("home-skill");
+			expect(names).not.toContain("above-home-skill");
 		});
 
 		test("returns empty when no ancestor has skills", async () => {

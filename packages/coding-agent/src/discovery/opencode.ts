@@ -210,7 +210,7 @@ async function loadSkills(ctx: LoadContext): Promise<LoadResult<Skill>> {
 					level: "project",
 				}),
 			);
-			if (ctx.repoRoot && current === ctx.repoRoot) break;
+			if (current === (ctx.repoRoot ?? ctx.home)) break;
 			const parent = path.dirname(current);
 			if (parent === current) break; // filesystem root
 			current = parent;
