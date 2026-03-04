@@ -49,6 +49,8 @@ async function loadAgentsMd(ctx: LoadContext): Promise<LoadResult<ContextFile>> 
 			}
 		}
 
+		if (ctx.repoRoot && current === ctx.repoRoot) break; // scanned repo root, stop
+
 		// Move to parent directory
 		const parent = path.dirname(current);
 		if (parent === current) break; // Reached filesystem root
