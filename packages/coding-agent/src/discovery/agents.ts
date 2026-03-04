@@ -15,7 +15,7 @@ import { type Skill, skillCapability } from "../capability/skill";
 import { type SlashCommand, slashCommandCapability } from "../capability/slash-command";
 import { type SystemPrompt, systemPromptCapability } from "../capability/system-prompt";
 import type { LoadContext, LoadResult } from "../capability/types";
-import { buildRuleFromMarkdown, createSourceMeta, loadFilesFromDir, scanSkillsFromDir } from "./helpers";
+import { buildRuleFromMarkdown, calculateDepth, createSourceMeta, loadFilesFromDir, scanSkillsFromDir } from "./helpers";
 
 const PROVIDER_ID = "agents";
 const DISPLAY_NAME = "Agents (standard)";
@@ -166,7 +166,10 @@ async function loadContextFiles(ctx: LoadContext): Promise<LoadResult<ContextFil
 	const load = async (filePath: string, level: "user" | "project"): Promise<ContextFile | null> => {
 		const content = await readFile(filePath);
 		if (!content) return null;
-		return { path: filePath, content, level, _source: createSourceMeta(PROVIDER_ID, filePath, level) };
+		// filePath is <ancestor>/.agent(s)/AGENTS.md — go up past the config dir to the ancestor
+		const ancestorDir = path.dirname(path.dirname(filePath));
+		const depth = level === "project" ? calculateDepth(ctx.cwd, ancestorDir, path.sep) : undefined;
+		return { path: filePath, content, level, depth, _source: createSourceMeta(PROVIDER_ID, filePath, level) };
 	};
 
 	const results = await Promise.all([

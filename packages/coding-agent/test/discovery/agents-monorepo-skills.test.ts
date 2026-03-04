@@ -15,6 +15,7 @@ import type { Skill } from "@oh-my-pi/pi-coding-agent/capability/skill";
 import type { LoadContext, LoadResult } from "@oh-my-pi/pi-coding-agent/capability/types";
 import {
 	buildRuleFromMarkdown,
+	calculateDepth,
 	createSourceMeta,
 	loadFilesFromDir,
 	scanSkillsFromDir,
@@ -358,6 +359,30 @@ describe("agents provider project-level discovery", () => {
 			const found = results.filter(r => r !== null);
 			expect(found).toHaveLength(1);
 			expect(found[0]).toContain("Root Rules");
+		});
+
+		test("multi-level context files get distinct depth values for dedup", async () => {
+			writeFile(path.join(subProject, ".agents", "AGENTS.md"), "# Local Rules");
+			writeFile(path.join(repoRoot, ".agents", "AGENTS.md"), "# Root Rules");
+
+			const paths = getProjectPathCandidates(ctx, "AGENTS.md");
+			const items: Array<{ content: string; depth: number }> = [];
+			for (const p of paths) {
+				const content = await readFile(p);
+				if (!content) continue;
+				const ancestorDir = path.dirname(path.dirname(p));
+				const depth = calculateDepth(ctx.cwd, ancestorDir, path.sep);
+				items.push({ content, depth });
+			}
+
+			expect(items).toHaveLength(2);
+			// Depths must differ so dedup keys are distinct
+			expect(items[0]!.depth).not.toBe(items[1]!.depth);
+			// Local (depth 0) before root (positive depth)
+			expect(items[0]!.depth).toBe(0);
+			expect(items[0]!.content).toContain("Local Rules");
+			expect(items[1]!.depth).toBeGreaterThan(0);
+			expect(items[1]!.content).toContain("Root Rules");
 		});
 	});
 
