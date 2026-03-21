@@ -33,11 +33,13 @@ import { ExtensionDashboard } from "../components/extensions";
 import { HistorySearchComponent } from "../components/history-search";
 import { ModelSelectorComponent } from "../components/model-selector";
 import { OAuthSelectorComponent } from "../components/oauth-selector";
+import { SessionObserverOverlayComponent } from "../components/session-observer-overlay";
 import { SessionSelectorComponent } from "../components/session-selector";
 import { SettingsSelectorComponent } from "../components/settings-selector";
 import { ToolExecutionComponent } from "../components/tool-execution";
 import { TreeSelectorComponent } from "../components/tree-selector";
 import { UserMessageSelectorComponent } from "../components/user-message-selector";
+import type { SessionObserverRegistry } from "../session-observer-registry";
 
 const CALLBACK_SERVER_PROVIDERS = new Set<OAuthProvider>([
 	"anthropic",
@@ -865,6 +867,30 @@ export class SelectorController {
 	showDebugSelector(): void {
 		this.showSelector(done => {
 			const selector = new DebugSelectorComponent(this.ctx, done);
+			return { component: selector, focus: selector };
+		});
+	}
+
+	showSessionObserver(registry: SessionObserverRegistry): void {
+		const observeKeys = this.ctx.keybindings.getKeys("observeSessions");
+
+		this.showSelector(done => {
+			let cleanup: (() => void) | undefined;
+
+			const selector = new SessionObserverOverlayComponent(
+				registry,
+				() => {
+					cleanup?.();
+					done();
+				},
+				observeKeys,
+			);
+
+			cleanup = registry.onChange(() => {
+				selector.refreshFromRegistry();
+				this.ctx.ui.requestRender();
+			});
+
 			return { component: selector, focus: selector };
 		});
 	}
