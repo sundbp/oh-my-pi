@@ -2,6 +2,9 @@
 
 ## [Unreleased]
 
+### Added
+
+- Session observer overlay (`Ctrl+S`): view running subagent sessions with a picker and read-only transcript showing thinking, text, tool calls, and results
 ## [13.14.0] - 2026-03-20
 
 ### Added
